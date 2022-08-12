@@ -1,0 +1,37 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.container {
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+}
+
+.grid {
+  width: 250px;
+  height: 500px;
+  background-color: red;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.grid div {
+  width: 25px;
+  height: 25px;
+  border: 1px solid black;
+}
+
+.block {
+  background-color: blue;
+}
