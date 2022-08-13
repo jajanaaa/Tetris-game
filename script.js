@@ -1,7 +1,8 @@
 // const scoreDisplay = document.querySelector("#score");
-// const startBtn = document.querySelector("#btn-start");
+const startBtn = document.querySelector("#btn-start");
 const left = document.querySelector("#left");
 const right = document.querySelector("#right");
+const rotate = document.querySelector("#rotate");
 // Selecting elements
 const grid = document.querySelector(".grid");
 let squares = Array.from(document.querySelectorAll(".grid div")); //Array with 200 divs (index 0-199)
@@ -55,7 +56,8 @@ const blocks = [iblock, lblock, jblock, oblock, tblock, zblock];
 
 let centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
 let random = Math.floor(Math.random() * blocks.length);
-let current = blocks[1][0]; // first index is a block, second index its position
+let currentRotation = 0;
+let current = blocks[3][0]; // first index is a block, second index its position
 // Draw first position of first block
 function draw() {
   current.forEach((index) =>
@@ -70,7 +72,7 @@ function undraw() {
 }
 
 // Make the block go down
-draw();
+// draw();
 
 // let timerId = setInterval(function moveDown() {
 //   undraw();
@@ -89,29 +91,6 @@ draw();
 //   }
 // }
 // We need to add 10 divs after container and check + width(10) because next coming div has to stop not once there is a div with a class of bottom but on top of that div
-
-function freeze() {
-  if (
-    current.some((index) =>
-      squares[centralPosition + index + width].classList.contains("bottom")
-    )
-  ) {
-    clearInterval(timerId);
-    current.forEach((index) =>
-      squares[centralPosition + index].classList.add("bottom")
-    );
-    centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
-    random = Math.floor(Math.random() * blocks.length);
-    current = blocks[0][0];
-    draw();
-    timerId = setInterval(function moveDown() {
-      undraw();
-      centralPosition += width;
-      draw();
-      freeze();
-    }, 500);
-  }
-}
 
 // function freeze (){
 //     if (current.some((index).classList.contains("block")) {
@@ -137,10 +116,6 @@ function freeze() {
 //   }
 // }
 
-// const array = [1, 2, 3, 4, 5];
-
-// // checks whether an element is even
-// itemsArray.some;
 left.addEventListener("click", function () {
   undraw();
   const lefteage = current.some(
@@ -150,13 +125,108 @@ left.addEventListener("click", function () {
   if (!lefteage) {
     centralPosition -= 1;
   }
+  if (
+    current.some((index) =>
+      squares[centralPosition + index].classList.contains("bottom")
+    )
+  ) {
+    centralPosition += 1;
+  }
   draw();
 });
-
-//   [0, 1, 11, 21],
 
 right.addEventListener("click", function () {
   undraw();
-  centralPosition += 1;
+  const righteage = current.some(
+    (index) => (centralPosition + index) % width === width - 1
+  );
+  if (!righteage) {
+    centralPosition += 1;
+  }
+  if (
+    current.some((index) =>
+      squares[centralPosition + index].classList.contains("bottom")
+    )
+  ) {
+    centralPosition -= 1;
+  }
   draw();
 });
+
+// ROTATE BLOCK
+
+rotate.addEventListener("click", function () {
+  undraw();
+  currentRotation++;
+  if (currentRotation === current.length) {
+    currentRotation = 0;
+    console.log(current.length);
+  }
+  current = blocks[3][0];
+  draw();
+});
+
+startBtn.addEventListener("click", function () {
+  TimerId = setInterval(function moveDown() {
+    undraw();
+    centralPosition += width;
+    draw();
+    freeze();
+  }, 500);
+});
+
+//add functionality to the button
+// startBtn.addEventListener('click', () => {
+//   if (timerId) {
+//     clearInterval(timerId)
+//     timerId = null
+//   } else {
+//     draw()
+//     timerId = setInterval(moveDown, 1000)
+//     nextRandom = Math.floor(Math.random()*theTetrominoes.length)
+//     displayShape()
+//   }
+// })
+
+// let timerId = setInterval(function moveDown() {
+//   undraw();
+//   centralPosition += width;
+//   draw();
+//   freeze();
+// }, 500);
+
+function freeze() {
+  if (
+    current.some((index) =>
+      squares[centralPosition + index + width].classList.contains("bottom")
+    )
+  ) {
+    clearInterval(TimerId);
+    current.forEach((index) =>
+      squares[centralPosition + index].classList.add("bottom")
+    );
+    centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
+    random = Math.floor(Math.random() * blocks.length);
+    current = blocks[random][currentRotation];
+    draw();
+    TimerId = setInterval(function moveDown() {
+      undraw();
+      centralPosition += width;
+      draw();
+      freeze();
+    }, 500);
+  }
+  gameOver();
+}
+
+// GEME OVER
+function gameOver() {
+  if (
+    current.some((index) =>
+      squares[centralPosition + index + width].classList.contains("bottom")
+    )
+  ) {
+    clearInterval(TimerId);
+  }
+}
+// console.log(current[squares[14]].classList.contains("bottom"));
