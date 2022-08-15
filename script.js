@@ -1,18 +1,38 @@
-const scoreDisplay = document.querySelector("#score");
-const startBtn = document.querySelector("#btn-start");
-const left = document.querySelector("#left");
-const right = document.querySelector("#right");
-const rotate = document.querySelector("#rotate");
-// Selecting elements
-// const grid = document.querySelector(".grid");
-let squares = Array.from(document.querySelectorAll(".grid div"));
-let miniSquares = Array.from(document.querySelectorAll(".mini-grid div"));
-//Array with 200 divs (index 0-199)
+// CREATE 200 DIV 10 width * 20 height) AND 10 DIV FOR THE BOTTOM OF THE CONTAINER IN HTML
+let grid = document.getElementsByClassName("grid")[0];
+for (let i = 0; i < 210; i++) {
+  let element = document.createElement("div");
+  if (i >= 200) {
+    element.classList.add("bottom");
+  }
+  grid.appendChild(element);
+}
+
+// CREATE 36 DIV (6 * 6) FOR THE MINI GRID
+let miniGrid = document.getElementsByClassName("mini-grid")[0];
+for (let i = 0; i < 36; i++) {
+  let element = document.createElement("div");
+  miniGrid.appendChild(element);
+}
+
+//SELECT ELEMENTS
+let squares = Array.from(document.querySelectorAll(".grid div")); //Array with 200 div (index 0-199)
 const width = 10; // 10 squares is width of the grid
+
+const startBtn = document.querySelector("#btn-start");
+const scoreDisplay = document.querySelector("#display-score");
+const leftBtn = document.querySelector("#btn-left");
+const rightBtn = document.querySelector("#btn-right");
+const downBtn = document.querySelector("#btn-down");
+const rotateBtn = document.querySelector("#btn-rotate");
+
+let miniSquares = Array.from(document.querySelectorAll(".mini-grid div"));
+
 let TimerId;
-score = 0;
-let ifgameOver = false;
+let score = 0;
 let nextRandom = 0;
+let ifGameOver = false;
+let textGameOver = document.querySelector("#game-over");
 const colors = [
   "#4285F4",
   "#FBBC04",
@@ -22,100 +42,85 @@ const colors = [
   "#46BDC6",
 ];
 
-// Drawing blocks
-const iblock = [
-  [-1, 0, 1, 2],
-  [0, width, width * 2, width * 3],
-  [-1, 0, 1, 2],
-  [0, width, width * 2, width * 3],
+//DRAW BLOCKS
+const iBlock = [
+  [-1, 0, 1, 2], //0
+  [0, width, width * 2, width * 3], //1
+  [-1, 0, 1, 2], //2
+  [0, width, width * 2, width * 3], //3
 ];
 
-const lblock = [
-  [0, 1, width + 1, width * 2 + 1],
-  [2, width, width + 1, width + 2],
-  [0, width, width * 2, width * 2 + 1],
-  [0, 1, 2, width],
+const lBlock = [
+  [0, 1, width + 1, width * 2 + 1], //0
+  [2, width, width + 1, width + 2], //1
+  [1, width + 1, width * 2 + 1, width * 2 + 2], //2
+  [width, width + 1, width + 2, width * 2], //3
 ];
 
-const jblock = [
-  [0, 1, width, width * 2],
-  [0, 1, 2, width + 2],
-  [1, width + 1, width * 2, width * 2 + 1],
-  [0, width, width + 1, width + 2],
+const jBlock = [
+  [0, 1, width, width * 2], //0
+  [width, width + 1, width + 2, width * 2 + 2], //1
+  [0, width, width * 2, width * 2 - 1], //2
+  [0, width, width + 1, width + 2], //3
 ];
 
-const oblock = [
-  [0, 1, width, width + 1],
-  [0, 1, width, width + 1],
-  [0, 1, width, width + 1],
-  [0, 1, width, width + 1],
+const oBlock = [
+  [0, 1, width, width + 1], //0
+  [0, 1, width, width + 1], //1
+  [0, 1, width, width + 1], //2
+  [0, 1, width, width + 1], //3
 ];
 
-const tblock = [
-  [0, width - 1, width, width + 1],
-  [0, width, width + 1, width * 2],
-  [-1, 0, 1, width],
-  [0, width, width - 1, width * 2],
+const tBlock = [
+  [0, width - 1, width, width + 1], //0
+  [0, width, width + 1, width * 2], //1
+  [width - 1, width, width + 1, width * 2], //2
+  [0, width, width - 1, width * 2], //3
 ];
 
-const zblock = [
-  [-1, 0, width, width + 1],
-  [0, width, width + 1, width * 2 + 1],
-  [0, 1, width, width, width - 1],
-  [0, width, width + 1, width * 2 + 1],
+const zBlock = [
+  [-1, 0, width, width + 1], //0
+  [0, width, width + 1, width * 2 + 1], //1
+  [0, 1, width, width, width - 1], //2
+  [0, width, width + 1, width * 2 + 1], //3
 ];
 
-const blocks = [iblock, lblock, jblock, oblock, tblock, zblock];
+const blocks = [iBlock, lBlock, jBlock, oBlock, tBlock, zBlock]; //5
 
-let centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
+let centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center, add 4 to index to move block to the center of the grid
 let random = Math.floor(Math.random() * blocks.length);
-// let nextRandom = Math.floor(Math.random() * nextBlock.length);
 let currentRotation = 0;
 let current = blocks[random][currentRotation]; // first index is a block, second index its position
-// Draw first position of first block
+
+// COLOR SELECTED SQUARES TO DISPLAY A BLOCK
 function draw() {
   current.forEach((index) => {
     squares[centralPosition + index].classList.add("block"),
       (squares[centralPosition + index].style.backgroundColor = colors[random]);
   });
-}
-
-// draw();
-
+} //For each randomly selected block and its rotation we add class "block" and background color to each of its squares
 function undraw() {
   current.forEach((index) => {
     squares[centralPosition + index].classList.remove("block"),
       (squares[centralPosition + index].style.backgroundColor = "");
   });
+} // To move a block down we first need to undraw it and draw it again in a next line
+
+// MOVE DOWN FUNCTION
+function moveDown() {
+  undraw();
+  centralPosition += width;
+  draw();
+  freeze();
 }
 
-// Make the block go down
-// draw();
-
-// let timerId = setInterval(function moveDown() {
-//   undraw();
-//   centralPosition += width;
-//   draw();
-//   freeze();
-// }, 500);
-
-// function freeze() {
-//   if (
-//     current.some((index) =>
-//       squares[centralPosition + index + width].classList.contains("taken")
-//     )
-//   ) {
-//     clearInterval(timerId);
-//   }
-// }
-// We need to add 10 divs after container and check + width(10) because next coming div has to stop not once there is a div with a class of bottom but on top of that div
+// MOVE LEFT FUNCTION
 function moveLeft() {
-  undraw();
-  const lefteage = current.some(
+  const leftEdge = current.some(
     (index) => (centralPosition + index) % width === 0
   );
-  console.log(lefteage);
-  if (!lefteage) {
+  undraw();
+  if (!leftEdge) {
     centralPosition -= 1;
   }
   if (
@@ -128,14 +133,13 @@ function moveLeft() {
   draw();
 }
 
-left.addEventListener("click", moveLeft);
-
+// MOVE RIGHT FUNCTION
 function moveRight() {
   undraw();
-  const righteage = current.some(
+  const rightEdge = current.some(
     (index) => (centralPosition + index) % width === width - 1
   );
-  if (!righteage) {
+  if (!rightEdge) {
     centralPosition += 1;
   }
   if (
@@ -147,18 +151,16 @@ function moveRight() {
   }
   draw();
 }
-right.addEventListener("click", moveRight);
-
-// ROTATE BLOCK
+// ROTATE FUNCTION
 function rotateBlock() {
-  const lefteage = current.some(
+  const leftEdge = current.some(
     (index) => (centralPosition + index) % width === 0
   );
-  const righteage = current.some(
+  const rightEdge = current.some(
     (index) => (centralPosition + index) % width === width - 1
   );
 
-  if (!(lefteage | righteage)) {
+  if (!(leftEdge | rightEdge)) {
     undraw();
     currentRotation++;
     if (currentRotation === current.length) {
@@ -169,32 +171,7 @@ function rotateBlock() {
   draw();
 }
 
-// ROTATE BLOCK
-
-rotate.addEventListener("click", rotateBlock);
-
-// TimerId = setInterval(moveDown, 500);
-
-// add functionality to the button
-// startBtn.addEventListener("click", () => {
-//   if (timerId) {
-//     clearInterval(timerId);
-//     timerId = null;
-//   } else {
-//     draw();
-//     timerId = setInterval(moveDown, 1000);
-//     nextRandom = Math.floor(Math.random() * theTetrominoes.length);
-//     displayShape();
-//   }
-// });
-
-// let timerId = setInterval(function moveDown() {
-//   undraw();
-//   centralPosition += width;
-//   draw();
-//   freeze();
-// }, 500);
-
+// FREEZE FUNCTION
 function freeze() {
   if (
     current.some((index) =>
@@ -205,73 +182,29 @@ function freeze() {
     current.forEach((index) =>
       squares[centralPosition + index].classList.add("bottom")
     );
-    centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
+    centralPosition = 4;
     random = nextRandom;
     nextRandom = Math.floor(Math.random() * blocks.length);
     current = blocks[random][currentRotation];
     addScore();
     draw();
     displayMini();
-    // speed = 100;
     TimerId = setInterval(moveDown, 500);
-
-    // TimerId = setInterval(function () {
-    //   undraw();
-    //   centralPosition += width;
-    //   draw();
-    //   freeze();
-    // }, 500);
     gameOver();
   }
 }
 
-function moveDown() {
-  undraw();
-  centralPosition += width;
-  draw();
-  freeze();
-}
-// GEME OVER
-// function gameOver() {
-//   if (
-//     current.some((index) =>
-//       squares[centralPosition + index].classList.contains("bottom")
-//     )
-//   ) {
-//     clearInterval(TimerId);
-//   }
-// }
-// console.log(current[squares[14]].classList.contains("bottom"));
-
-// const bottom = document.querySelector("#bottom");
-// function control(e) {
-//   if (e.keyCode === 40) {
-//     moveDown();
-//   }
-// }
-// document.addEventListener("keydown", control);
-
-bottom.addEventListener("click", moveDown);
-
-// Make last row dissaper
-
-// MOVE ELEMENTS ON BUTTONS AND KEYS
-// SEE PREVIOUS ELEMENT
-// GAME OVER
-// ELEMENTS LOCATION
-
-// PREVIEW NEXT BLOCK
-
-const miniwidth = 6;
-let displayIndex = 0;
+// DISPLAY MINI GRID
+const miniWidth = 6;
+let displayIndex = 2;
 
 const nextBlock = [
-  [1, 0, 1, 2],
-  [0, 1, miniwidth + 1, miniwidth * 2 + 1],
-  [0, 1, miniwidth, miniwidth * 2],
-  [0, 1, miniwidth, miniwidth + 1],
-  [0, miniwidth - 1, miniwidth, miniwidth + 1],
-  [1, 0, miniwidth, miniwidth + 1],
+  [miniWidth - 1, miniWidth, miniWidth + 1, miniWidth + 2], //0
+  [0, 1, miniWidth + 1, miniWidth * 2 + 1], //1
+  [0, 1, miniWidth, miniWidth * 2], //2
+  [miniWidth, miniWidth + 1, miniWidth * 2, miniWidth * 2 + 1], //3
+  [miniWidth, miniWidth * 2 - 1, miniWidth * 2, miniWidth * 2 + 1], //4
+  [miniWidth - 1, miniWidth, miniWidth * 2, miniWidth * 2 + 1], //5
 ];
 
 function displayMini() {
@@ -280,33 +213,30 @@ function displayMini() {
     square.style.backgroundColor = "";
   });
   nextBlock[nextRandom].forEach((index) => {
-    miniSquares[index + displayIndex].classList.add("block");
-    miniSquares[index + displayIndex].style.backgroundColor =
+    miniSquares[index + displayIndex + miniWidth].classList.add("block");
+    miniSquares[index + displayIndex + miniWidth].style.backgroundColor =
       colors[nextRandom];
   });
-  console.log(nextBlock[0]);
-  console.log(miniSquares);
 }
 
-// TimerId = setInterval(moveDown, 500);
-// displayMini();
 // START BTN
 startBtn.addEventListener("click", function () {
   if (TimerId) {
     clearInterval(TimerId);
     TimerId = null;
     //The result of the setTimeout() always returns a Number. This number represents the ID value of the timer that is set. Use this value with the clearTimeout() method to cancel the timer.
-    startBtn.innerText = "Start";
+    startBtn.innerText = "START";
   } else {
     draw();
     displayMini();
     TimerId = setInterval(moveDown, 500);
-    startBtn.innerText = "Pause";
+    startBtn.innerText = "PAUSE";
   }
-  // if (ifgameOver) {
-  //   window.location.reload();
-  // }
+  if (ifGameOver) {
+    window.location.reload();
+  }
 });
+
 // ADD SCORE
 function addScore() {
   for (let i = 0; i < 199; i += width) {
@@ -324,7 +254,6 @@ function addScore() {
     ];
 
     if (row.every((index) => squares[index].classList.contains("bottom"))) {
-      console.log("row is full");
       score += 10;
       scoreDisplay.innerHTML = score;
       row.forEach((index) => {
@@ -333,41 +262,49 @@ function addScore() {
         squares[index].style.backgroundColor = "";
       });
       const squaresRemoved = squares.splice(i, width);
-      console.log(squaresRemoved);
       squares = squaresRemoved.concat(squares);
       squares.forEach((cell) => grid.appendChild(cell));
     }
   }
 }
 
+//GAME OVER FUNCTION
 function gameOver() {
   if (
     current.some((index) =>
-      squares[centralPosition + index].classList.contains("bottom")
+      squares[centralPosition + index + width].classList.contains("bottom")
     )
   ) {
-    alert("GAME OVER!");
+    ifGameOver = true;
+    textGameOver.innerText = "GAME OVER";
+    startBtn.innerText = "AGAIN";
     clearInterval(TimerId);
-    startBtn.innerText = "TRY AGAIN";
+    TimerId = null;
   }
 }
-// rotate()
+
+// KEY PRESS AND BUTTONS EVENTS
 function control(e) {
   if (e.keyCode === 37) {
-    // Left Arrow
+    // Left arrow
     moveLeft();
   }
   if (e.keyCode === 39) {
-    // RIGHT Arrow
+    // Right arrow
     moveRight();
   }
   if (e.keyCode === 38) {
-    // ARROW UP
+    // Arrow up
     rotateBlock();
   }
   if (e.keyCode === 40) {
-    // Down Arrow
+    // Arrow down
     moveDown();
   }
 }
 document.addEventListener("keydown", control);
+
+leftBtn.addEventListener("click", moveLeft);
+rightBtn.addEventListener("click", moveRight);
+rotateBtn.addEventListener("click", rotateBlock);
+downBtn.addEventListener("click", moveDown);
