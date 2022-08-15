@@ -33,6 +33,7 @@ let score = 0;
 let nextRandom = 0;
 let ifGameOver = false;
 let textGameOver = document.querySelector("#game-over");
+
 const colors = [
   "#4285F4",
   "#FBBC04",
@@ -99,6 +100,7 @@ function draw() {
       (squares[centralPosition + index].style.backgroundColor = colors[random]);
   });
 } //For each randomly selected block and its rotation we add class "block" and background color to each of its squares
+
 function undraw() {
   current.forEach((index) => {
     squares[centralPosition + index].classList.remove("block"),
@@ -118,7 +120,7 @@ function moveDown() {
 function moveLeft() {
   const leftEdge = current.some(
     (index) => (centralPosition + index) % width === 0
-  );
+  ); // Squares on the left edge are 0, 10, 20, 30 and so on, they are fully divisible by 10
   undraw();
   if (!leftEdge) {
     centralPosition -= 1;
@@ -138,7 +140,7 @@ function moveRight() {
   undraw();
   const rightEdge = current.some(
     (index) => (centralPosition + index) % width === width - 1
-  );
+  ); // Squares on the left edge are 9, 19, 29, 39 and so on, they are fully divisible by 9
   if (!rightEdge) {
     centralPosition += 1;
   }
@@ -151,6 +153,7 @@ function moveRight() {
   }
   draw();
 }
+
 // ROTATE FUNCTION
 function rotateBlock() {
   const leftEdge = current.some(
@@ -196,7 +199,7 @@ function freeze() {
 
 // DISPLAY MINI GRID
 const miniWidth = 6;
-let displayIndex = 2;
+let miniIndex = 2;
 
 const nextBlock = [
   [miniWidth - 1, miniWidth, miniWidth + 1, miniWidth + 2], //0
@@ -213,8 +216,8 @@ function displayMini() {
     square.style.backgroundColor = "";
   });
   nextBlock[nextRandom].forEach((index) => {
-    miniSquares[index + displayIndex + miniWidth].classList.add("block");
-    miniSquares[index + displayIndex + miniWidth].style.backgroundColor =
+    miniSquares[index + miniIndex + miniWidth].classList.add("block");
+    miniSquares[index + miniIndex + miniWidth].style.backgroundColor =
       colors[nextRandom];
   });
 }
@@ -224,7 +227,6 @@ startBtn.addEventListener("click", function () {
   if (TimerId) {
     clearInterval(TimerId);
     TimerId = null;
-    //The result of the setTimeout() always returns a Number. This number represents the ID value of the timer that is set. Use this value with the clearTimeout() method to cancel the timer.
     startBtn.innerText = "START";
   } else {
     draw();
@@ -237,7 +239,7 @@ startBtn.addEventListener("click", function () {
   }
 });
 
-// ADD SCORE
+// ADD SCORE AND MAKE A ROW DISAPPEAR
 function addScore() {
   for (let i = 0; i < 199; i += width) {
     const row = [

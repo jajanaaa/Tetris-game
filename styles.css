@@ -31,6 +31,12 @@ body {
   position: relative;
 }
 
+.grid div,
+.mini-grid div {
+  width: 25px;
+  height: 25px;
+}
+
 .mini-grid {
   width: 150px;
   height: 150px;
@@ -39,19 +45,9 @@ body {
   flex-wrap: wrap;
 }
 
-.grid div {
-  width: 25px;
-  height: 25px;
-}
-
 .block {
   background-color: #46bdc6;
   border: 1px solid rgba(255, 255, 255, 0.52);
-}
-
-.mini-grid div {
-  width: 25px;
-  height: 25px;
 }
 
 .right-side {
@@ -59,7 +55,7 @@ body {
   flex-direction: column;
   align-self: flex-start;
 }
-/*     font-size: 2em; */
+
 #btn-start {
   background-color: black;
   font-size: 2em;
@@ -67,16 +63,6 @@ body {
   padding: 20px 50px;
   border: none;
   transition: background-color 0.2s ease;
-}
-
-h3 {
-  margin: 20px 0;
-}
-
-#game-over {
-  position: absolute;
-  top: 45%;
-  left: 25%;
 }
 
 #btn-start:hover {
@@ -88,47 +74,59 @@ h3 {
   outline: none;
 }
 
-.btn {
-  display: none;
+.score {
+  margin: 20px 0;
 }
+
+#game-over {
+  position: absolute;
+  top: 45%;
+  left: 25%;
+}
+
+.buttons,
 .title {
   display: none;
-}
-@media (max-width: 767px) {
-  .btn {
-    display: block;
-    padding: 10px 0;
-    width: 62.5px;
-  }
-  table {
-    display: none;
-  }
-  .container {
-    flex-direction: column;
-  }
-  .mini-grid {
-    display: none;
-  }
-  .buttons {
-    display: flex;
-  }
-  .start-and-buttons {
-    display: flex;
-    flex-direction: column-reverse;
-    width: 100%;
-  }
-  .right-side {
-    flex-direction: column-reverse;
-    width: 250px;
-  }
-  .title {
-    display: block;
-  }
-  h3 {
-    margin: 20px auto;
-  }
 }
 
 table th {
   padding: 0 10px 10px 0;
+}
+
+@media (max-width: 767px) {
+  table,
+  .mini-grid {
+    display: none;
+  }
+
+  .container {
+    flex-direction: column;
+  }
+
+  .right-side {
+    flex-direction: column-reverse;
+    width: 250px;
+  }
+
+  .start-and-buttons {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  .buttons {
+    display: flex;
+  }
+
+  .btn {
+    padding: 10px 0;
+    width: 62.5px;
+  }
+
+  .title {
+    display: block;
+  }
+
+  .score {
+    margin: 20px auto;
+  }
 }
