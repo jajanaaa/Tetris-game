@@ -4,12 +4,24 @@ const left = document.querySelector("#left");
 const right = document.querySelector("#right");
 const rotate = document.querySelector("#rotate");
 // Selecting elements
-const grid = document.querySelector(".grid");
-let squares = Array.from(document.querySelectorAll(".grid div")); //Array with 200 divs (index 0-199)
+// const grid = document.querySelector(".grid");
+let squares = Array.from(document.querySelectorAll(".grid div"));
+let miniSquares = Array.from(document.querySelectorAll(".mini-grid div"));
+//Array with 200 divs (index 0-199)
 const width = 10; // 10 squares is width of the grid
 let TimerId;
 score = 0;
 let ifgameOver = false;
+let nextRandom = 0;
+const colors = [
+  "#4285F4",
+  "#FBBC04",
+  "#EA4335",
+  "#34A853",
+  "#FF6D01",
+  "#46BDC6",
+];
+
 // Drawing blocks
 const iblock = [
   [-1, 0, 1, 2],
@@ -57,21 +69,24 @@ const blocks = [iblock, lblock, jblock, oblock, tblock, zblock];
 
 let centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
 let random = Math.floor(Math.random() * blocks.length);
+// let nextRandom = Math.floor(Math.random() * nextBlock.length);
 let currentRotation = 0;
 let current = blocks[random][currentRotation]; // first index is a block, second index its position
 // Draw first position of first block
 function draw() {
-  current.forEach((index) =>
-    squares[centralPosition + index].classList.add("block")
-  );
+  current.forEach((index) => {
+    squares[centralPosition + index].classList.add("block"),
+      (squares[centralPosition + index].style.backgroundColor = colors[random]);
+  });
 }
 
 // draw();
 
 function undraw() {
-  current.forEach((index) =>
-    squares[centralPosition + index].classList.remove("block")
-  );
+  current.forEach((index) => {
+    squares[centralPosition + index].classList.remove("block"),
+      (squares[centralPosition + index].style.backgroundColor = "");
+  });
 }
 
 // Make the block go down
@@ -94,8 +109,7 @@ function undraw() {
 //   }
 // }
 // We need to add 10 divs after container and check + width(10) because next coming div has to stop not once there is a div with a class of bottom but on top of that div
-
-left.addEventListener("click", function () {
+function moveLeft() {
   undraw();
   const lefteage = current.some(
     (index) => (centralPosition + index) % width === 0
@@ -112,9 +126,11 @@ left.addEventListener("click", function () {
     centralPosition += 1;
   }
   draw();
-});
+}
 
-right.addEventListener("click", function () {
+left.addEventListener("click", moveLeft);
+
+function moveRight() {
   undraw();
   const righteage = current.some(
     (index) => (centralPosition + index) % width === width - 1
@@ -130,11 +146,11 @@ right.addEventListener("click", function () {
     centralPosition -= 1;
   }
   draw();
-});
+}
+right.addEventListener("click", moveRight);
 
 // ROTATE BLOCK
-
-rotate.addEventListener("click", function () {
+function rotateBlock() {
   const lefteage = current.some(
     (index) => (centralPosition + index) % width === 0
   );
@@ -151,45 +167,26 @@ rotate.addEventListener("click", function () {
     current = blocks[random][currentRotation];
   }
   draw();
-});
-
-function moveDown() {
-  undraw();
-  centralPosition += width;
-  draw();
-  freeze();
 }
 
-startBtn.addEventListener("click", function () {
-  if (TimerId) {
-    clearInterval(TimerId);
-    TimerId = null;
-    //The result of the setTimeout() always returns a Number. This number represents the ID value of the timer that is set. Use this value with the clearTimeout() method to cancel the timer.
-    startBtn.innerText = "Start";
-  } else {
-    draw();
-    TimerId = setInterval(moveDown, 500);
-    startBtn.innerText = "Pause";
-  }
-  if (ifgameOver) {
-    window.location.reload();
-  }
-});
+// ROTATE BLOCK
+
+rotate.addEventListener("click", rotateBlock);
 
 // TimerId = setInterval(moveDown, 500);
 
-//add functionality to the button
-// startBtn.addEventListener('click', () => {
+// add functionality to the button
+// startBtn.addEventListener("click", () => {
 //   if (timerId) {
-//     clearInterval(timerId)
-//     timerId = null
+//     clearInterval(timerId);
+//     timerId = null;
 //   } else {
-//     draw()
-//     timerId = setInterval(moveDown, 1000)
-//     nextRandom = Math.floor(Math.random()*theTetrominoes.length)
-//     displayShape()
+//     draw();
+//     timerId = setInterval(moveDown, 1000);
+//     nextRandom = Math.floor(Math.random() * theTetrominoes.length);
+//     displayShape();
 //   }
-// })
+// });
 
 // let timerId = setInterval(function moveDown() {
 //   undraw();
@@ -197,18 +194,6 @@ startBtn.addEventListener("click", function () {
 //   draw();
 //   freeze();
 // }, 500);
-function gameOver() {
-  if (
-    current.some((index) =>
-      squares[centralPosition + index].classList.contains("bottom")
-    )
-  ) {
-    ifgameOver = true;
-    alert("GAME OVER!");
-    clearInterval(TimerId);
-    startBtn.innerText = "TRY AGAIN";
-  }
-}
 
 function freeze() {
   if (
@@ -221,9 +206,12 @@ function freeze() {
       squares[centralPosition + index].classList.add("bottom")
     );
     centralPosition = 4; // grid is 10 squares, because of 0 index 4 is center
-    random = Math.floor(Math.random() * blocks.length);
+    random = nextRandom;
+    nextRandom = Math.floor(Math.random() * blocks.length);
     current = blocks[random][currentRotation];
+    addScore();
     draw();
+    displayMini();
     // speed = 100;
     TimerId = setInterval(moveDown, 500);
 
@@ -233,12 +221,16 @@ function freeze() {
     //   draw();
     //   freeze();
     // }, 500);
-    addScore();
     gameOver();
   }
-  // gameOver();
 }
 
+function moveDown() {
+  undraw();
+  centralPosition += width;
+  draw();
+  freeze();
+}
 // GEME OVER
 // function gameOver() {
 //   if (
@@ -252,16 +244,70 @@ function freeze() {
 // console.log(current[squares[14]].classList.contains("bottom"));
 
 // const bottom = document.querySelector("#bottom");
-function control(e) {
-  if (e.keyCode === 40) {
-    moveDown();
-  }
-}
-document.addEventListener("keydown", control);
+// function control(e) {
+//   if (e.keyCode === 40) {
+//     moveDown();
+//   }
+// }
+// document.addEventListener("keydown", control);
 
 bottom.addEventListener("click", moveDown);
 
 // Make last row dissaper
+
+// MOVE ELEMENTS ON BUTTONS AND KEYS
+// SEE PREVIOUS ELEMENT
+// GAME OVER
+// ELEMENTS LOCATION
+
+// PREVIEW NEXT BLOCK
+
+const miniwidth = 6;
+let displayIndex = 0;
+
+const nextBlock = [
+  [1, 0, 1, 2],
+  [0, 1, miniwidth + 1, miniwidth * 2 + 1],
+  [0, 1, miniwidth, miniwidth * 2],
+  [0, 1, miniwidth, miniwidth + 1],
+  [0, miniwidth - 1, miniwidth, miniwidth + 1],
+  [1, 0, miniwidth, miniwidth + 1],
+];
+
+function displayMini() {
+  miniSquares.forEach((square) => {
+    square.classList.remove("block");
+    square.style.backgroundColor = "";
+  });
+  nextBlock[nextRandom].forEach((index) => {
+    miniSquares[index + displayIndex].classList.add("block");
+    miniSquares[index + displayIndex].style.backgroundColor =
+      colors[nextRandom];
+  });
+  console.log(nextBlock[0]);
+  console.log(miniSquares);
+}
+
+// TimerId = setInterval(moveDown, 500);
+// displayMini();
+// START BTN
+startBtn.addEventListener("click", function () {
+  if (TimerId) {
+    clearInterval(TimerId);
+    TimerId = null;
+    //The result of the setTimeout() always returns a Number. This number represents the ID value of the timer that is set. Use this value with the clearTimeout() method to cancel the timer.
+    startBtn.innerText = "Start";
+  } else {
+    draw();
+    displayMini();
+    TimerId = setInterval(moveDown, 500);
+    startBtn.innerText = "Pause";
+  }
+  // if (ifgameOver) {
+  //   window.location.reload();
+  // }
+});
+// ADD SCORE
 function addScore() {
   for (let i = 0; i < 199; i += width) {
     const row = [
@@ -281,8 +327,11 @@ function addScore() {
       console.log("row is full");
       score += 10;
       scoreDisplay.innerHTML = score;
-      row.forEach((index) => squares[index].classList.remove("bottom"));
-      row.forEach((index) => squares[index].classList.remove("block"));
+      row.forEach((index) => {
+        squares[index].classList.remove("bottom");
+        squares[index].classList.remove("block");
+        squares[index].style.backgroundColor = "";
+      });
       const squaresRemoved = squares.splice(i, width);
       console.log(squaresRemoved);
       squares = squaresRemoved.concat(squares);
@@ -291,7 +340,34 @@ function addScore() {
   }
 }
 
-// MOVE ELEMENTS ON BUTTONS AND KEYS
-// SEE PREVIOUS ELEMENT
-// GAME OVER
-// ELEMENTS LOCATION
+function gameOver() {
+  if (
+    current.some((index) =>
+      squares[centralPosition + index].classList.contains("bottom")
+    )
+  ) {
+    alert("GAME OVER!");
+    clearInterval(TimerId);
+    startBtn.innerText = "TRY AGAIN";
+  }
+}
+// rotate()
+function control(e) {
+  if (e.keyCode === 37) {
+    // Left Arrow
+    moveLeft();
+  }
+  if (e.keyCode === 39) {
+    // RIGHT Arrow
+    moveRight();
+  }
+  if (e.keyCode === 38) {
+    // ARROW UP
+    rotateBlock();
+  }
+  if (e.keyCode === 40) {
+    // Down Arrow
+    moveDown();
+  }
+}
+document.addEventListener("keydown", control);
