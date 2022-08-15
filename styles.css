@@ -88,7 +88,8 @@ h1 {
 @media (max-width: 767px) {
   .btn {
     display: block;
-    padding: 10px 23px;
+    padding: 10px 0;
+    width: 62.5px;
   }
   table {
     display: none;
@@ -104,7 +105,7 @@ h1 {
   }
   .start-and-buttons {
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     width: 100%;
   }
   .right-side {
