@@ -18,8 +18,8 @@ body {
 
 .container {
   display: flex;
-  flex-direction: row-reverse;
   align-items: center;
+  gap: 25px;
 }
 
 .grid {
@@ -28,6 +28,7 @@ body {
   background-color: #d9d9d9;
   display: flex;
   flex-wrap: wrap;
+  position: relative;
 }
 
 .mini-grid {
@@ -41,7 +42,6 @@ body {
 .grid div {
   width: 25px;
   height: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.52);
 }
 
 .block {
@@ -52,5 +52,63 @@ body {
 .mini-grid div {
   width: 25px;
   height: 25px;
-  border: 1px solid rgba(255, 255, 255, 0.52);
+}
+
+.right-side {
+  display: flex;
+  flex-direction: column;
+  align-self: flex-start;
+}
+/*     font-size: 2em; */
+#btn-start {
+  background-color: black;
+  font-size: 2em;
+  color: white;
+  padding: 20px 50px;
+  border: none;
+}
+
+h3 {
+  margin: 20px 0;
+}
+
+h1 {
+  position: absolute;
+  top: 45%;
+  left: 25%;
+}
+
+#btn-start:hover {
+  background-color: #3d3d3d;
+}
+
+.btn {
+  display: none;
+}
+@media (max-width: 767px) {
+  .btn {
+    display: block;
+    padding: 10px 23px;
+  }
+  table {
+    display: none;
+  }
+  .container {
+    flex-direction: column;
+  }
+  .mini-grid {
+    display: none;
+  }
+  .buttons {
+    display: flex;
+  }
+  .start-and-buttons {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+  .right-side {
+    flex-direction: column-reverse;
+    width: 250px;
+  }
 }

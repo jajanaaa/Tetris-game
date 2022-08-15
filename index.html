@@ -7,19 +7,67 @@
     <title>Tetris Game</title>
     <link rel="stylesheet" href="styles.css" />
     <script defer src="new-script.js"></script>
+    <script
+      src="https://kit.fontawesome.com/1cfaa0e0e7.js"
+      crossorigin="anonymous"
+    ></script>
   </head>
   <body>
     <div class="container">
-      <div>
+      <!-- <div>
+        <span>ACTION</span><span>KEY</span>
+        <br />
+        <span>Rotate</span> <span>▲</span>
+        <br />
+        <span>Slide Left</span>
+        <span>◀</span>
+        <br />
+        <span>Slide Right</span><span>▶</span>
+        <br />
+        <span>Slide Down</span> <span>▼</span>
+      </div> -->
+      <!--  -->
+      <table>
+        <tr>
+          <th>ACTION</th>
+          <th>KEY</th>
+        </tr>
+        <tr>
+          <td>Rotate</td>
+          <td>▲</td>
+        </tr>
+        <tr>
+          <td>Left</td>
+          <td>◀</td>
+        </tr>
+        <tr>
+          <td>Right</td>
+          <td>▶</td>
+        </tr>
+        <tr>
+          <td>Down</td>
+          <td>▼</td>
+        </tr>
+      </table>
+      <h2>TETRIS</h2>
+      <div class="grid">
+        <h1></h1>
+      </div>
+      <div class="right-side">
         <div class="mini-grid"></div>
         <h3>Score:<span id="display-score">0</span></h3>
-        <button id="btn-start">Start</button>
-        <button id="btn-left">⬅️ Left</button>
-        <button id="btn-right">➡️ Right</button>
-        <button id="btn-down">⬇️ Bottom</button>
-        <button id="btn-rotate">Rotate</button>
+        <div class="start-and-buttons">
+          <button id="btn-start">START</button>
+          <div class="buttons">
+            <button class="btn" id="btn-left">◀</button>
+            <button class="btn" id="btn-right">▶</button>
+            <button class="btn" id="btn-down">▼</button>
+            <button class="btn" id="btn-rotate">
+              <i class="fa-solid fa-rotate"></i>
+            </button>
+          </div>
+        </div>
       </div>
-      <div class="grid"></div>
     </div>
   </body>
 </html>
