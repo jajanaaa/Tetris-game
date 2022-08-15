@@ -44,7 +44,7 @@ contains())
 
 ### What I learned
 
-I have practiced working with arrays, creating random numbers, appending elements to HTML, adding and removing CSS classes, settings and removing intervals, and working with loops and functions, events listeners, and key-down events.
+I have practiced working with arrays, creating random numbers, appending elements to HTML, adding and removing CSS classes, settings and removing intervals, working with loops and functions, events listeners, and key-down events.
 
 ### Continued development
 
