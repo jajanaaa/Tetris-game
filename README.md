@@ -20,10 +20,9 @@ This is my portfolio project aiming to reproduce a famous Tetris Game in JavaScr
 ## My process
 
 ### Built with
-
-- JavaScript (
-addEventListener()
-querySelector()
+- JavaScript
+  - addEventListener()
+  - querySelector()
 querySelectorAll()
 keyCode()
 Math.floor()
