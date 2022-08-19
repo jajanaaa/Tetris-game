@@ -23,21 +23,21 @@ This is my portfolio project aiming to reproduce a famous Tetris Game in JavaScr
 - JavaScript
   - addEventListener()
   - querySelector()
-querySelectorAll()
-keyCode()
-Math.floor()
-Math.random()
-length
-forEach()
-splice()
-clearInterval()
-setInterval()
-some()
-innerHTML()
-every()
-add()
-remove()
-contains())
+  - querySelectorAll()
+  - keyCode()
+  - Math.floor()
+  - Math.random()
+  - length
+  - forEach()
+  - splice()
+  - clearInterval()
+  - setInterval()
+  - some()
+  - innerHTML()
+  - every()
+  - add()
+  - remove()
+  - contains()
 - HTML
 - CSS 
 
